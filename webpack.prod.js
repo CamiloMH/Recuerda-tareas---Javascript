@@ -1,22 +1,25 @@
-const HtmlWebPackPlugin       = require('html-webpack-plugin'); 
-const MiniCssExtractPlugin    = require('mini-css-extract-plugin');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const MinifyPlugin            = require('babel-minify-webpack-plugin');
-const { CleanWebpackPlugin }  = require('clean-webpack-plugin');
+const CopyWebPackPlugin = require('copy-webpack-plugin');
+const MinifyPlugin = require('babel-minify-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('path');
 
 module.exports = {
+
     mode: 'production',
     optimization: {
-        minimizer: [ new OptimizeCssAssetsPlugin() ]
+        minimizer: [new OptimizeCssAssetsPlugin()]
     },
     output: {
-        filename: 'main.[contentHash].js'
+        filename: 'main.[hash].js',
+        path: path.resolve(__dirname, 'dist'),
     },
     module: {
-        rules: [
-            { 
-                test: /\.js$/, 
-                exclude: /node_modules/, 
+        rules: [{
+                test: /\.m?js$/,
+                exclude: /node_modules/,
                 use: [
                     'babel-loader'
                 ]
@@ -37,27 +40,25 @@ module.exports = {
                 ]
             },
             {
-                test: /\.html$/,
-                use: [
-                    {
-                        loader: 'html-loader',
-                        options: { minimize: false }
-                    }
-                ]
+                test: /\.html$/i,
+                loader: 'html-loader',
+                options: {
+                    attributes: false,
+                    minimize: false,
+                },
+
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            esModule: false,
-                            name: 'assets/[name].[ext]'
-                        }
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        esModule: false
                     }
-                ]
+                }]
             }
         ]
+
     },
     plugins: [
         new HtmlWebPackPlugin({
@@ -65,12 +66,17 @@ module.exports = {
             filename: './index.html'
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].[contentHash].css',
+            filename: '[name].[hash].css',
             ignoreOrder: false
+        }),
+        new CopyWebPackPlugin({
+            patterns: [
+                { from: 'src/assets', to: 'assets/' },
+            ],
         }),
         new MinifyPlugin(),
         new CleanWebpackPlugin(),
+
     ]
 
 }
-
