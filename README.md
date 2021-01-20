@@ -1,4 +1,4 @@
-# Webpack Starter
+# Recuerda tareas
 
 Este es el proyecto inicial para crear aplicaciones utilizando webpack.
 
@@ -8,7 +8,14 @@ Recuerden reconstruir los módulos de Node
 npm install
 ```
 
-Y para construir el build, recueren:
+Para construir el build, recuerden:
 ```
 npm run build
 ```
+
+Para iniciar la pagina.
+```
+npm run start:dev
+```
+
+
